@@ -1,8 +1,15 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-dotenv.config();
+
+//import Routes
+import UserRouter from "./routes/user.route.js";
+
 const app = express();
+dotenv.config();
+
+//calling routes
+app.use("/api/v1/user", UserRouter);
 
 const startDB = async () => {
   try {
