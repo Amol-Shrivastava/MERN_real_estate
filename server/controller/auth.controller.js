@@ -9,7 +9,7 @@ const signUp = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
-    res.status(201).json({ message: "User is created.." });
+    res.status(201).json({ success: true, message: "User is created.." });
   } catch (error) {
     next(errFunc(550, "Error from signUp function"));
   }
