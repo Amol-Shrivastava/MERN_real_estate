@@ -4,12 +4,17 @@ import dotenv from "dotenv";
 
 //import Routes
 import UserRouter from "./routes/user.route.js";
+import AuthRouter from "./routes/auth.route.js";
 
 const app = express();
 dotenv.config();
 
+//allow json
+app.use(express.json());
+
 //calling routes
 app.use("/api/v1/user", UserRouter);
+app.use("/api/v1/auth", AuthRouter);
 
 const startDB = async () => {
   try {
