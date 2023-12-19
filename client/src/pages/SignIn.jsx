@@ -1,12 +1,18 @@
 import React, { useState } from 'react'
 import { Link,useNavigate } from 'react-router-dom';
-import {showNotification} from "../util/common"
+import {showNotification} from "../util/common";
+
+import {useDispatch, useSelector} from 'react-redux';
+
+import {signInStart, signInFailure, signInSuccess} from "../redux/user/userSlice"
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [loading, setIsLoading] = useState(false);
+  // const [loading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
+  const {loading, error} = useSelector(state => state.user)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   function inputHandler(oEvent) {
     // debugger;
@@ -16,7 +22,8 @@ const SignIn = () => {
   async function submitHandler(oEvent) {
     try {
       oEvent.preventDefault();
-      setIsLoading(true);
+      // setIsLoading(true);
+      dispatch(signInStart());
       const res = await fetch('/api/v1/auth/signin', {
         method: 'POST',
         headers: {
@@ -27,18 +34,21 @@ const SignIn = () => {
       const {success,message} = await res.json();
       
       if(success) {
+        dispatch(signInSuccess(message))
         setNotification({success, message:'Successfully logged in...'});
         setTimeout(navigate('/'), 500)
+        return;
       }
     
-      
+      dispatch(signInFailure(message))
   
     // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
     }finally {
-      setIsLoading(false);
-      setFormData({});
+      // setIsLoading(false);
+      // setFormData({});
+      // dispatch(signInFailure())
       // setNotification({})
       document.getElementById('SignInForm').reset();
     }
