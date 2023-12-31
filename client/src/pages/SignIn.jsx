@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { Link,useNavigate } from 'react-router-dom';
 import {showNotification} from "../util/common";
 
@@ -10,7 +10,7 @@ const SignIn = () => {
   const [formData, setFormData] = useState({});
   // const [loading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
-  const {loading, error} = useSelector(state => state.user)
+  const {loading} = useSelector(state => state.user)
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -46,10 +46,6 @@ const SignIn = () => {
     } catch (error) {
       throw error;
     }finally {
-      // setIsLoading(false);
-      // setFormData({});
-      // dispatch(signInFailure())
-      // setNotification({})
       document.getElementById('SignInForm').reset();
     }
   }

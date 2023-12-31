@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Link,useNavigate } from 'react-router-dom';
 import {showNotification} from "../util/common"
 
@@ -29,9 +29,6 @@ const SignUp = () => {
       if(success) {
         setTimeout(navigate('/sign-in'), 500)
       }
-    
-      
-  
     // eslint-disable-next-line no-useless-catch
     } catch (error) {
       throw error;
