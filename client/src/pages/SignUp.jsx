@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link,useNavigate } from 'react-router-dom';
-import {showNotification} from "../util/common"
+import {showNotification} from "../util/common";
+import OAuth from "../components/OAuth"
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
@@ -50,6 +51,7 @@ const SignUp = () => {
         <input type="email" name="email" id="email" className='border p-3 rounded-lg focus:shadow-inner shadow-sm focus:outline-none' onChange={inputHandler} placeholder="Email" />
         <input type="password" name="password" id="password" className='border p-3 rounded-lg shadow-sm focus:shadow-inner focus:outline-none' onChange={inputHandler} placeholder="Password" />
         <button type="submit" disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 mt-3">{loading ? 'Loading...':'Sign Up'}</button>
+        <OAuth />
       </form>
       <div>
         <p className='font-semibold text-black mt-4'>Have an account? 

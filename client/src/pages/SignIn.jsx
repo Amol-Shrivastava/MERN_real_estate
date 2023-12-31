@@ -5,6 +5,7 @@ import {showNotification} from "../util/common";
 import {useDispatch, useSelector} from 'react-redux';
 
 import {signInStart, signInFailure, signInSuccess} from "../redux/user/userSlice"
+import OAuth from '../components/OAuth';
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
@@ -59,6 +60,7 @@ const SignIn = () => {
         <input type="email" name="email" id="email" className='border p-3 rounded-lg focus:shadow-inner shadow-sm focus:outline-none' onChange={inputHandler} placeholder="Email" />
         <input type="password" name="password" id="password" className='border p-3 rounded-lg shadow-sm focus:shadow-inner focus:outline-none' onChange={inputHandler} placeholder="Password" />
         <button type="submit" disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 mt-3">{loading ? 'Loading...':'Sign In'}</button>
+        <OAuth />
       </form>
       <div>
         <p className='font-semibold text-black mt-4'>Donot have an account? 
@@ -71,6 +73,7 @@ const SignIn = () => {
       <p className='text-red-600 visible:hidden' id="userCreationFailedMsg" ></p>
      {(notification && notification.success) ? showNotification('userCreationSuccessMsg', {message: notification.message}): null}
      {(notification && !notification.success) ? showNotification('userCreationFailedMsg',{message: notification.message}): null}
+     
      
     </div>
   )
