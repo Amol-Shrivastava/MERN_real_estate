@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 //import Routes
 import UserRouter from "./routes/user.route.js";
@@ -14,6 +15,7 @@ dotenv.config();
 
 //allow json
 app.use(express.json());
+app.use(cookieParser());
 
 //calling routes
 app.use("/api/v1/user", UserRouter);
