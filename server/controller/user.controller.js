@@ -44,4 +44,23 @@ const updateUserInfo = async (req, res, next) => {
   }
 };
 
-export { testAPI, updateUserInfo };
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { id: tokenId } = req.user;
+    if (tokenId !== id)
+      return next(
+        errorGenerationFunc(401, "You can only delete your own account")
+      );
+
+    await userModel.findByIdAndDelete(id);
+    res.clearCookie("access_token");
+    res
+      .status(200)
+      .json({ success: true, message: "User has been successfully deleted" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { testAPI, updateUserInfo, deleteUser };

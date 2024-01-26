@@ -2,11 +2,21 @@ import {FaSearch} from 'react-icons/fa';
 import {Link} from 'react-router-dom';
 
 import {useSelector} from 'react-redux';
+import { useEffect, useState } from 'react';
+
 
 const Header = () => {
-
-    const {currentUser} = useSelector(state => state.user);
-    
+    const [avatar, setAvatar] = useState(null);
+    const {currentUser} = useSelector(state => state?.user);
+    console.log(currentUser)
+    useEffect(() => {
+        if(!avatar && Object.keys(currentUser).includes('msg')) {
+            setAvatar(currentUser.msg.avatar)
+        }else {
+            setAvatar(currentUser.avatar)
+        }
+    }, [currentUser])
+   
 
   return (
     <header className="bg-slate-200 shadow-md">
@@ -30,7 +40,7 @@ const Header = () => {
                 </Link>
 
             <Link to='/profile'>
-                { (currentUser && currentUser.message) ? ( <img src={currentUser.message.avatar} className='w-8 h-8 object-cover rounded-full' alt='profile' />)
+                {(avatar) ? ( <img src={avatar} className='w-8 h-8 object-cover rounded-full' alt='profile' />)
                  : (<li className='sm:inline text-slate-700 hover:underline'>Sign In</li>)}
             </Link>
             </ul>
