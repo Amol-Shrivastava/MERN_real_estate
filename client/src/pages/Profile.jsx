@@ -97,7 +97,7 @@ const Profile = () => {
     }
   }
 
-  const handleDeleteUser = async(event) => {
+  const handleDeleteUser = async() => {
     try {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/v1/user/delete/${userId}`, {
@@ -117,7 +117,7 @@ const Profile = () => {
     }
   }
 
-  const handleSignOut = async(event) => {
+  const handleSignOut = async() => {
     try {
       dispatch(signOutUserStart())
       const res = await fetch('/api/v1/auth/sign-out');

@@ -4,8 +4,9 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 //import Routes
-import UserRouter from "./routes/user.route.js";
-import AuthRouter from "./routes/auth.route.js";
+import userRouter from "./routes/user.route.js";
+import authRouter from "./routes/auth.route.js";
+import listingRouter from "./routes/listing.route.js";
 
 //import Middleware
 import { errorHandler } from "./middleware/errorHandler.middleware.js";
@@ -18,8 +19,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 //calling routes
-app.use("/api/v1/user", UserRouter);
-app.use("/api/v1/auth", AuthRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/listing", listingRouter);
 
 //error Handler
 app.use(errorHandler);
