@@ -9,10 +9,10 @@ import { useEffect, useState } from 'react';
 const Header = () => {
     const [avatar, setAvatar] = useState(null);
     const {currentUser} = useSelector(state => state?.user);
-    console.log(currentUser)
+    // console.log(currentUser)
     useEffect(() => {
         if(currentUser) {
-            if(avatar && Object.keys(currentUser).includes('message')) {
+            if(!avatar && Object.keys(currentUser).includes('message')) {
                 setAvatar(currentUser.message.avatar)
             }else {
                 setAvatar(currentUser.avatar)
@@ -20,7 +20,7 @@ const Header = () => {
         }
         
     }, [currentUser])
-   
+   console.log(`avatar header: ${avatar}`)
 
   return (
     <header className="bg-slate-200 shadow-md">
