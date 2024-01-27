@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom';
 
 import {useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
+// import { current } from '@reduxjs/toolkit';
 
 
 const Header = () => {
@@ -10,11 +11,14 @@ const Header = () => {
     const {currentUser} = useSelector(state => state?.user);
     console.log(currentUser)
     useEffect(() => {
-        if(!avatar && Object.keys(currentUser).includes('msg')) {
-            setAvatar(currentUser.msg.avatar)
-        }else {
-            setAvatar(currentUser.avatar)
+        if(currentUser) {
+            if(avatar && Object.keys(currentUser).includes('message')) {
+                setAvatar(currentUser.message.avatar)
+            }else {
+                setAvatar(currentUser.avatar)
+            }
         }
+        
     }, [currentUser])
    
 

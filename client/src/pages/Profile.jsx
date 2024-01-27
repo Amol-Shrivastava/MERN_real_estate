@@ -25,11 +25,11 @@ const Profile = () => {
   let avatar = null, username = null, email = null, userId = null;
 
   if(!avatar && !username && !email && !userId){
-    if(Object.keys(currentUser).includes('msg')) {
-      avatar = currentUser.msg.avatar
-      username = currentUser.msg.username;
-      email = currentUser.msg.email;
-      userId = currentUser.msg._id;
+    if(Object.keys(currentUser).includes('message')) {
+      avatar = currentUser.message.avatar
+      username = currentUser.message.username;
+      email = currentUser.message.email;
+      userId = currentUser.message._id;
     }else {
       avatar = currentUser.avatar
       username = currentUser.username;
