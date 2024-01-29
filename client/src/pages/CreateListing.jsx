@@ -5,12 +5,25 @@ import { app } from '../firebase';
 function Createlisting() {
   const [files, setFiles] = useState({});
   const [formData, setFormData] = useState({
-    imageUrlsArr: []
+    imageUrlsArr: [],
+    otherDetails: {
+      name: '',
+      description: '',
+      address: '',
+      type: 'rent',
+      bedrooms: 1,
+      bathrooms: 1,
+      regularPrice: 0,
+      discountPrice: 0,
+      offer: false,
+      parking: false,
+      furniture: false
+    }
   });
   const [imageUploadError, setImageUploadError] = useState({success: false, msg: ''});
   const [uploading, setUploading] = useState(false);
 
-  // console.log(formData)
+  console.log(formData)
   const handleImgsUpload = async () => {
       try {
         if(files.length && (files.length+formData.imageUrlsArr.length) < 7) {
@@ -79,6 +92,24 @@ function Createlisting() {
     })
   }
 
+  const handleInput = e => {
+    let {id, value} = e.target;
+    let updateType = formData.otherDetails.type;
+
+    if(id=='sale') updateType = 'sale'
+    if(id == 'renting') updateType = 'rent';
+
+    
+    if(id=='parking' || id=='furniture' || id=='offer') value = e.target.checked;
+    
+    if(id=='bathrooms' || id == 'bedrooms' || id== 'regularPrice' || id=='discountPrice') value = Number(value);
+
+
+    setFormData({...formData, otherDetails: {...formData.otherDetails, [id]: value, type: updateType}})
+    
+
+  }
+
   return (
     <main className='p-3 max-w-4xl mx-auto'>
       <h1 className='text-center text-3xl font-semibold my-8'>
@@ -86,55 +117,55 @@ function Createlisting() {
       </h1>
       <form className='flex sm:flex-row flex-col gap-6'>
           <div className='flex flex-col gap-4 flex-1'>
-            <input type="text" name="listing-name" id="listing-name" className='border p-3 rounded-lg' placeholder='Name' maxLength={'62'} minLength={'10'} required/>
+            <input type="text" name="name" id="name" className='border p-3 rounded-lg' placeholder='Name' maxLength={'62'} minLength={'10'} required onChange={handleInput} value={formData.otherDetails.name}/>
 
-            <textarea type="text" name="listing-desc" id="listing-desc" className='border p-3 rounded-lg' placeholder='Description' required/>
+            <textarea type="text" name="desc" id="description" className='border p-3 rounded-lg' placeholder='Description' value={formData.otherDetails.description} onChange={handleInput} required/>
 
-            <input type="text" name="listing-address" id="listing-address" className='border p-3 rounded-lg' placeholder='Address' required/>
+            <input type="text" name="address" id="address" className='border p-3 rounded-lg' value={formData.otherDetails.address} onChange={handleInput} placeholder='Address' required/>
           
             <div className='flex gap-4 flex-wrap'>
               <div className='flex gap-2'>
-                <input type="checkbox" name="Sale" id="sale" className='w-5'/>
+                <input type="checkbox" name="type" id="sale" className='w-5' value={formData.otherDetails.type} onChange={handleInput} checked={formData.otherDetails.type == 'sale'}/>
                 <span>Sale</span>
               </div>
               <div className='flex gap-2'>
-                <input type="checkbox" name="renting" id="renting" className='w-5'/>
+                <input type="checkbox" value={formData.otherDetails.type} onChange={handleInput} name="type" id="renting" className='w-5' checked={formData.otherDetails.type == 'rent'}/>
                 <span>Renting</span>
               </div>
           
               
               <div className='flex gap-2'>
-                <input type="checkbox" name="Parking" id="Parking" className='w-5'/>
+                <input type="checkbox" name="parking" id="parking" className='w-5' value={formData.otherDetails.parking} checked={formData.otherDetails.parking} onChange={handleInput}/>
                 <span>Parking Spot</span>
               </div>
               <div className='flex gap-2'>
-                <input type="checkbox" name="furniture" id="furniture" className='w-5'/>
+                <input type="checkbox" name="furniture" id="furniture" className='w-5' value={formData.otherDetails.furniture} checked={formData.otherDetails.furniture} onChange={handleInput}/>
                 <span>Furniture</span>
               </div>
               <div className='flex gap-2'>
-                <input type="checkbox" name="offer" id="offer" className='w-5'/>
+                <input type="checkbox" name="offer" id="offer" className='w-5' value={formData.otherDetails.offer} checked={formData.otherDetails.offer} onChange={handleInput}/>
                 <span>Offer</span>
               </div>
             </div>
 
             <div className='flex flex-wrap gap-4'>
               <div className='flex items-center gap-2'>
-                <input type="number" name="bedrooms" id="bedrooms" min='1' max='10' required className='border border-gray-300 rounded-lg p-1'/>
+                <input type="number" name="bedrooms" id="bedrooms" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.bedrooms} onChange={handleInput}/>
                 <p>Beds</p>
               </div>
               <div className='flex items-center gap-2'>
-                <input type="number" name="bathrooms" id="bathrooms" min='1' max='10' required className='border border-gray-300 rounded-lg p-1'/>
+                <input type="number" name="bathrooms" id="bathrooms" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.bathrooms} onChange={handleInput}/>
                 <p>Baths</p>
               </div>
               <div className='flex items-center gap-2'>
-                <input type="number" name="regPrice" id="regPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1'/>
+                <input type="number" name="regularPrice"  id="regularPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.regularPrice}  onChange={handleInput}/>
                 <div className="flex flex-col items-center">
                   <p>Regular Price</p>
                   <span className='text-sm'>($ / month)</span>
                 </div>
               </div>
               <div className='flex items-center gap-2'>
-                <input type="number" name="disPrice" id="disPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1'/>
+                <input type="number" name="discountPrice" id="discountPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.discountPrice} onChange={handleInput}/>
                 <div className="flex flex-col items-center">
                   <p>Discounted Price</p>
                   <span className='text-sm'>($ / month)</span>
