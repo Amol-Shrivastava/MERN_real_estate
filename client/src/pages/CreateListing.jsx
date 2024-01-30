@@ -1,9 +1,12 @@
 import {useState} from 'react';
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage';
 import { app } from '../firebase';
+import {useSelector} from 'react-redux';
+import {useNavigate} from 'react-router-dom'
 
 function Createlisting() {
   const [files, setFiles] = useState({});
+  const {currentUser} = useSelector(state => state.user)
   const [formData, setFormData] = useState({
     imageUrlsArr: [],
     otherDetails: {
@@ -13,15 +16,21 @@ function Createlisting() {
       type: 'rent',
       bedrooms: 1,
       bathrooms: 1,
-      regularPrice: 0,
-      discountPrice: 0,
+      regularPrice: 50,
+      discountedPrice: 0,
       offer: false,
       parking: false,
-      furniture: false
+      furnished: false,
+      userRef: currentUser.message._id
     }
   });
   const [imageUploadError, setImageUploadError] = useState({success: false, msg: ''});
   const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setsuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+  
 
   console.log(formData)
   const handleImgsUpload = async () => {
@@ -93,21 +102,51 @@ function Createlisting() {
   }
 
   const handleInput = e => {
-    let {id, value} = e.target;
+    let {id, value, type, checked} = e.target;
     let updateType = formData.otherDetails.type;
-
+    if(type=='text') value = value.trim();
     if(id=='sale') updateType = 'sale'
     if(id == 'renting') updateType = 'rent';
-
-    
-    if(id=='parking' || id=='furniture' || id=='offer') value = e.target.checked;
-    
+    if(id=='parking' || id=='furniture' || id=='offer') value = checked;
     if(id=='bathrooms' || id == 'bedrooms' || id== 'regularPrice' || id=='discountPrice') value = Number(value);
-
-
     setFormData({...formData, otherDetails: {...formData.otherDetails, [id]: value, type: updateType}})
-    
+  }
 
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if(!formData.imageUrlsArr.length) return setError('You must upload at least one image.')
+      
+      if(+formData.otherDetails.regularPrice < +formData.otherDetails.discountedPrice) return setError('Discount price must be less than regular price.')
+
+      setLoading(true);
+      setError(false);
+
+      const res = await fetch('/api/v1/listing/create-listing', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const {success, message} = await res.json();
+      setLoading(false);
+
+      if(!success) {
+        if(message.includes('Listing validation failed'))  setError('Input is missing for some required field. Please check again')
+        else setError(message)
+      }else {
+        setsuccess(true);
+        navigate(`/listing/${message._id}`)
+      }
+
+
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+      setsuccess(false);
+    }
   }
 
   return (
@@ -115,7 +154,7 @@ function Createlisting() {
       <h1 className='text-center text-3xl font-semibold my-8'>
         Create a Listing
       </h1>
-      <form className='flex sm:flex-row flex-col gap-6'>
+      <form className='flex sm:flex-row flex-col gap-6' onSubmit={handleSubmit}>
           <div className='flex flex-col gap-4 flex-1'>
             <input type="text" name="name" id="name" className='border p-3 rounded-lg' placeholder='Name' maxLength={'62'} minLength={'10'} required onChange={handleInput} value={formData.otherDetails.name}/>
 
@@ -139,7 +178,7 @@ function Createlisting() {
                 <span>Parking Spot</span>
               </div>
               <div className='flex gap-2'>
-                <input type="checkbox" name="furniture" id="furniture" className='w-5' value={formData.otherDetails.furniture} checked={formData.otherDetails.furniture} onChange={handleInput}/>
+                <input type="checkbox" name="furnished" id="furnished" className='w-5' value={formData.otherDetails.furniture} checked={formData.otherDetails.furniture} onChange={handleInput}/>
                 <span>Furniture</span>
               </div>
               <div className='flex gap-2'>
@@ -158,19 +197,23 @@ function Createlisting() {
                 <p>Baths</p>
               </div>
               <div className='flex items-center gap-2'>
-                <input type="number" name="regularPrice"  id="regularPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.regularPrice}  onChange={handleInput}/>
+                <input type="number" name="regularPrice"  id="regularPrice" min='50' max='10000000' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.regularPrice}  onChange={handleInput}/>
                 <div className="flex flex-col items-center">
                   <p>Regular Price</p>
                   <span className='text-sm'>($ / month)</span>
                 </div>
               </div>
-              <div className='flex items-center gap-2'>
-                <input type="number" name="discountPrice" id="discountPrice" min='1' max='10' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.discountPrice} onChange={handleInput}/>
-                <div className="flex flex-col items-center">
-                  <p>Discounted Price</p>
-                  <span className='text-sm'>($ / month)</span>
+             
+              {formData.otherDetails.offer &&  
+                <div className='flex items-center gap-2'>
+                  <input type="number" name="discountedPrice" id="discountedPrice" min='0' max='10000000' required className='border border-gray-300 rounded-lg p-1' value={formData.otherDetails.discountedPrice} onChange={handleInput}/>
+                  <div className="flex flex-col items-center">
+                    <p>Discounted Price</p>
+                    <span className='text-sm'>($ / month)</span>
+                  </div>
                 </div>
-              </div>
+              }
+
             </div>
           </div>
           <div className='flex flex-col flex-1'>
@@ -196,7 +239,11 @@ function Createlisting() {
               ))
             }
            
-            <button type="submit" className='mt-4 p-3 bg-slate-600 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-50'>Create Listing</button>
+            <button disabled={loading || uploading} type="submit" className='mt-4 p-3 bg-slate-600 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-50'>
+              { (loading && !error && !success) ? 'Creating...' : 'Create Listing'}
+            </button>
+            { error && <p className='text-red-700 text-sm mt-2'>{error}</p>}
+            { success && <p className='text-green-700 text-sm mt-2'>Listing Created Successfully</p>}
           </div>
       </form>
 

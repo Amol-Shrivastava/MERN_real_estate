@@ -46,7 +46,7 @@ const listingSchema = new Schema(
       type: Boolean,
       required: true,
     },
-    imageUrls: {
+    imageUrlsArr: {
       type: Array,
       required: true,
     },
