@@ -2,6 +2,7 @@
 import bcrypt from "bcryptjs";
 import userModel from "../models/user.model.js";
 import { errorGenerationFunc } from "../utils/errorGen.js";
+import listingModel from "../models/listing.model.js";
 
 const testAPI = (req, res) => {
   res.json({
@@ -63,4 +64,21 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-export { testAPI, updateUserInfo, deleteUser };
+const getUserListings = async (req, res, next) => {
+  try {
+    if (req.user.id !== req.params.id) {
+      return next(
+        errorGenerationFunc(401, "You can only view your own listings")
+      );
+    } else {
+      const listings = await listingModel
+        .find({ userRef: req.params.id })
+        .sort({ createdAt: -1 });
+      res.status(200).json({ success: true, message: listings });
+    }
+  } catch (error) {
+    next(error.message);
+  }
+};
+
+export { testAPI, updateUserInfo, deleteUser, getUserListings };

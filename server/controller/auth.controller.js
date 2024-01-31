@@ -22,7 +22,10 @@ const signIn = async (req, res, next) => {
     const validUser = await User.findOne({ email });
     if (!validUser) return next(errorGenerationFunc(404, "User not found!"));
 
-    const validPassword = await bcrypt.compare(password, validUser.password);
+    const validPassword = await bcrypt.compare(
+      password,
+      validUser._doc.password
+    );
     if (!validPassword)
       return next(errorGenerationFunc(401, "Wrong Credentials"));
 

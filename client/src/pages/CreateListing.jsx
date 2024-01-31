@@ -107,7 +107,7 @@ function Createlisting() {
     if(type=='text') value = value.trim();
     if(id=='sale') updateType = 'sale'
     if(id == 'renting') updateType = 'rent';
-    if(id=='parking' || id=='furniture' || id=='offer') value = checked;
+    if(id=='parking' || id=='furnished' || id=='offer') value = checked;
     if(id=='bathrooms' || id == 'bedrooms' || id== 'regularPrice' || id=='discountPrice') value = Number(value);
     setFormData({...formData, otherDetails: {...formData.otherDetails, [id]: value, type: updateType}})
   }
@@ -178,7 +178,7 @@ function Createlisting() {
                 <span>Parking Spot</span>
               </div>
               <div className='flex gap-2'>
-                <input type="checkbox" name="furnished" id="furnished" className='w-5' value={formData.otherDetails.furniture} checked={formData.otherDetails.furniture} onChange={handleInput}/>
+                <input type="checkbox" name="furnished" id="furnished" className='w-5' value={formData.otherDetails.furnished} checked={formData.otherDetails.furnished} onChange={handleInput}/>
                 <span>Furniture</span>
               </div>
               <div className='flex gap-2'>
@@ -232,7 +232,7 @@ function Createlisting() {
                 <div key={imgUrls} className='flex justify-between p-2 border items-center my-2'>
                    <div className='flex items-center justify-between p-2'>
                     <img src={imgUrls} alt="listing-image"  className='w-24 h-24 object-contain rounded-lg ' />
-                    <p className='text-sm text-gray-700'>{fileName}</p>
+                    <p className='text-sm text-gray-700 ml-6'>{fileName}</p>
                    </div>
                    <button type='button' onClick={() => handleImageDeletion(index)} className='p-3 text-red-700 cursor-pointer rounded-lg uppercase hover:opacity-75'>Delete</button>
                 </div>
