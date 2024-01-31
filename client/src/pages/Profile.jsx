@@ -10,14 +10,20 @@ import { app } from '../firebase';
 import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserFailure, signOutUserStart, signOutUserSuccess, updateUserFailure, updateUserStart, updateUserSuccess } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import LisitingCard from '../components/LisitingCard';
 
 const Profile = () => {
   const {currentUser, loading, error} = useSelector(state => state.user);
+  
   const fileRef = useRef(null);
+  
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showListingsError, setShowListingsError] = useState(false)
+  const [listings, setListings] = useState(null)
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
  
@@ -131,6 +137,23 @@ const Profile = () => {
       dispatch(signOutUserFailure(error.message))
     }
   }
+
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false)
+      const res = await fetch(`/api/v1/user/get_listings/${currentUser.message._id}`);
+      const {success, message} = await res.json();
+
+      if(!success) {
+        setShowListingsError(message);
+        return;
+      }else {
+        setListings(message)
+      }
+    } catch (error) {
+      setShowListingsError(error.message)
+    }
+  }
    
 
    return (
@@ -170,6 +193,15 @@ const Profile = () => {
 
         <span className="text-red-700 cursor-pointer" onClick={handleSignOut}>Sign Out</span>
       </div>
+      <button className='text-green-700 w-full text-center' onClick={handleShowListings}>Show Listings</button>
+      <p className='text-red-700 mt-5'>{showListingsError ? 'Error in showing listings' : ''}</p>
+      {listings && listings.length && (<h2 className='text-center font-bold text-2xl mt-6'>Your Listings</h2>) }
+      {listings && listings.length && 
+        listings.map(({imageUrlsArr, name, description, _id}) =>      
+            <LisitingCard key={_id} name={name} description={description} imageUrlsArr={imageUrlsArr}/>
+  
+       )
+      }
     </div>
   )
 }
